@@ -65,15 +65,18 @@ const TranslateButton = ({ className }) => {
     const handleTranslate = (langCode, langName) => {
         if (typeof window !== 'undefined' && typeof window.translate !== 'undefined') {
             if (langCode === 'original') {
-                // 恢复原文 - 清除保存的语言，刷新页面
+                // 恢复原文 - 清除所有缓存
                 localStorage.removeItem('translate_lang')
+                // 清除 translate.js 的缓存
+                if (window.translate.language && window.translate.language.clearCacheLanguage) {
+                    window.translate.language.clearCacheLanguage()
+                }
                 window.location.reload()
             } else {
                 // 保存用户选择的语言
                 localStorage.setItem('translate_lang', langCode)
-                // 设置目标语言并执行翻译
-                window.translate.language.setDefaultTo(langCode)
-                window.translate.execute()
+                // 使用 changeLanguage 切换语言（这是正确的 API）
+                window.translate.changeLanguage(langCode)
                 setCurrentLang(langName)
             }
         } else {

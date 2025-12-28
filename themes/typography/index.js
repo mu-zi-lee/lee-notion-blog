@@ -185,10 +185,9 @@ const TranslateLoader = () => {
     if (typeof window !== 'undefined' && typeof window.translate !== 'undefined') {
       const targetLang = getSavedOrBrowserLang()
       if (targetLang) {
-        window.translate.language.setDefaultTo(targetLang)
         // 延迟执行，确保新页面 DOM 已加载
         setTimeout(() => {
-          window.translate.execute()
+          window.translate.changeLanguage(targetLang)
           console.log('translate.js 翻译为:', targetLang)
         }, 300)
       }
