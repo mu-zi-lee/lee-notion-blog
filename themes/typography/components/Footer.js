@@ -1,5 +1,6 @@
 import { BeiAnGongAn } from '@/components/BeiAnGongAn'
 import DarkModeButton from '@/components/DarkModeButton'
+import TranslateButton from './TranslateButton'
 import { siteConfig } from '@/lib/config'
 
 /**
@@ -16,7 +17,11 @@ export default function Footer(props) {
 
   return (
     <footer>
-      <DarkModeButton className='pt-4' />
+      {/* 深色模式按钮和翻译按钮并排 */}
+      <div className='flex justify-center items-center gap-4 pt-4'>
+        <DarkModeButton />
+        <TranslateButton />
+      </div>
 
       <div className='font-bold text-[var(--primary-color)] dark:text-white py-6 text-sm flex flex-col gap-2 items-center'>
         <div>

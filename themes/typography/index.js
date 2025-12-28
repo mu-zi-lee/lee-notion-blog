@@ -5,6 +5,7 @@ import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import { isBrowser } from '@/lib/utils'
 import dynamic from 'next/dynamic'
+import Script from 'next/script'
 import SmartLink from '@/components/SmartLink'
 import { useRouter } from 'next/router'
 import { createContext, useContext, useEffect, useRef } from 'react'
@@ -118,6 +119,20 @@ const LayoutBase = props => {
 
         {/* 搜索框 */}
         <AlgoliaSearchModal cRef={searchModal} {...props} />
+
+        {/* translate.js 翻译功能 */}
+        <Script
+          src="https://cdn.staticfile.net/translate.js/3.15.6/translate.min.js"
+          strategy="afterInteractive"
+          onLoad={() => {
+            if (typeof translate !== 'undefined') {
+              translate.service.use('siliconflow')
+              // 隐藏默认的翻译按钮，使用自定义按钮
+              translate.selectLanguageTag.show = false
+              translate.execute()
+            }
+          }}
+        />
       </div>
     </ThemeGlobalSimple.Provider>
   )
@@ -171,7 +186,7 @@ const LayoutSearch = props => {
   return <LayoutPostList {...props} />
 }
 
- function groupArticlesByYearArray(articles) {
+function groupArticlesByYearArray(articles) {
   const grouped = {};
 
   for (const article of articles) {
