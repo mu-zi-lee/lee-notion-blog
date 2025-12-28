@@ -133,7 +133,7 @@ const TranslateLoader = () => {
   useEffect(() => {
     // 动态加载 translate.js
     const script = document.createElement('script')
-    script.src = 'https://cdn.staticfile.net/translate.js/3.15.6/translate.min.js'
+    script.src = '/js/translate.min.js'
     script.async = true
     script.onload = () => {
       if (typeof translate !== 'undefined') {
@@ -141,8 +141,7 @@ const TranslateLoader = () => {
         translate.service.use('siliconflow')
         // 隐藏默认的翻译按钮
         translate.selectLanguageTag.show = false
-        // 初始化翻译
-        translate.execute()
+        // 不自动执行翻译，等用户点击按钮时再翻译
         // 挂载到 window
         window.translate = translate
         console.log('translate.js 加载完成')

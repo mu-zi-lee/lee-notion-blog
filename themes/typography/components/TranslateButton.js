@@ -59,8 +59,10 @@ const TranslateButton = ({ className }) => {
                 // 恢复原文 - 刷新页面
                 window.location.reload()
             } else {
-                // 翻译到指定语言
-                window.translate.changeLanguage(langCode)
+                // 先初始化翻译（如果还没初始化）
+                // 设置目标语言并执行翻译
+                window.translate.language.setDefaultTo(langCode)
+                window.translate.execute()
                 setCurrentLang(langName)
             }
         } else {
