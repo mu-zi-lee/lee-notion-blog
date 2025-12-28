@@ -68,6 +68,17 @@ class MyDocument extends Document {
         <body>
           <Main />
           <NextScript />
+
+          {/* translate.js 翻译功能 */}
+          <script src="https://cdn.staticfile.net/translate.js/3.15.6/translate.min.js" />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                translate.service.use('siliconflow'); // 设置采用硅基流动的翻译通道
+                translate.execute(); // 触发翻译
+              `
+            }}
+          />
         </body>
       </Html>
     )
