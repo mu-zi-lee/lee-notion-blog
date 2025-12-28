@@ -128,9 +128,57 @@ const LayoutBase = props => {
 
 /**
  * translate.js 加载器组件
+ * 支持自动检测浏览器语言、记住用户选择
  */
 const TranslateLoader = () => {
   useEffect(() => {
+    // 浏览器语言代码映射到 translate.js 语言代码
+    const langMap = {
+      'zh-CN': 'chinese_simplified',
+      'zh-TW': 'chinese_traditional',
+      'zh-HK': 'chinese_traditional',
+      'zh': 'chinese_simplified',
+      'en': 'english',
+      'en-US': 'english',
+      'en-GB': 'english',
+      'ja': 'japanese',
+      'ko': 'korean',
+      'fr': 'french',
+      'de': 'german',
+      'es': 'spanish',
+      'ru': 'russian'
+    }
+
+    // 获取用户保存的语言或检测浏览器语言
+    const getSavedOrBrowserLang = () => {
+      // 优先使用用户保存的语言
+      const savedLang = localStorage.getItem('translate_lang')
+      if (savedLang) {
+        return savedLang
+      }
+
+      // 检测浏览器语言
+      const browserLang = navigator.language || navigator.userLanguage
+
+      // 如果浏览器语言是中文，返回 null（不翻译，显示原文）
+      if (browserLang.startsWith('zh')) {
+        return null
+      }
+
+      // 尝试精确匹配
+      if (langMap[browserLang]) {
+        return langMap[browserLang]
+      }
+
+      // 尝试匹配语言前缀（如 en-US -> en）
+      const langPrefix = browserLang.split('-')[0]
+      if (langMap[langPrefix]) {
+        return langMap[langPrefix]
+      }
+
+      return null
+    }
+
     // 动态加载 translate.js
     const script = document.createElement('script')
     script.src = '/js/translate.min.js'
@@ -141,10 +189,23 @@ const TranslateLoader = () => {
         translate.service.use('siliconflow')
         // 隐藏默认的翻译按钮
         translate.selectLanguageTag.show = false
-        // 不自动执行翻译，等用户点击按钮时再翻译
         // 挂载到 window
         window.translate = translate
-        console.log('translate.js 加载完成')
+
+        // 获取目标语言
+        const targetLang = getSavedOrBrowserLang()
+
+        if (targetLang) {
+          // 设置目标语言并执行翻译
+          translate.language.setDefaultTo(targetLang)
+          // 延迟执行，确保 DOM 已完全加载
+          setTimeout(() => {
+            translate.execute()
+            console.log('translate.js 自动翻译为:', targetLang)
+          }, 500)
+        } else {
+          console.log('translate.js 加载完成 (原文显示)')
+        }
       }
     }
     script.onerror = () => {

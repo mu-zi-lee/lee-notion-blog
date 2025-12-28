@@ -22,11 +22,20 @@ const TranslateButton = ({ className }) => {
         { code: 'russian', name: 'Русский' }
     ]
 
-    // 检查 translate.js 是否加载完成
+    // 检查 translate.js 是否加载完成，并读取已保存的语言
     useEffect(() => {
         const checkTranslate = () => {
             if (typeof window !== 'undefined' && typeof window.translate !== 'undefined') {
                 setIsReady(true)
+
+                // 读取已保存的语言偏好
+                const savedLang = localStorage.getItem('translate_lang')
+                if (savedLang) {
+                    const lang = languages.find(l => l.code === savedLang)
+                    if (lang) {
+                        setCurrentLang(lang.name)
+                    }
+                }
             }
         }
 
@@ -56,10 +65,12 @@ const TranslateButton = ({ className }) => {
     const handleTranslate = (langCode, langName) => {
         if (typeof window !== 'undefined' && typeof window.translate !== 'undefined') {
             if (langCode === 'original') {
-                // 恢复原文 - 刷新页面
+                // 恢复原文 - 清除保存的语言，刷新页面
+                localStorage.removeItem('translate_lang')
                 window.location.reload()
             } else {
-                // 先初始化翻译（如果还没初始化）
+                // 保存用户选择的语言
+                localStorage.setItem('translate_lang', langCode)
                 // 设置目标语言并执行翻译
                 window.translate.language.setDefaultTo(langCode)
                 window.translate.execute()
